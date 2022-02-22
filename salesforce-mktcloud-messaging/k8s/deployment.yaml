@@ -1,0 +1,93 @@
+#############
+# Broker MS #
+#############
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker-dep
+spec:
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+       app: broker
+    spec:
+      containers:
+        - name: broker
+          image: vagnernasc88/broker-ms:1.0.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: "LISTEN_PORT"
+              value: "80"
+            - name: "AMQP_CONN"
+              value: "amqp://guest:guest@rabbit-mq-service:5672"
+      restartPolicy: Always
+
+---
+###############
+# AMQP Server #
+###############
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit-mq-dep
+spec:
+  selector:
+    matchLabels:
+      app: rabbit-mq
+  template:
+    metadata:
+      labels:
+       app: rabbit-mq
+    spec:
+      containers:
+        - name: rabbit-mq
+          image: rabbitmq:3.6-management-alpine
+          ports:
+            - containerPort: 5672
+      restartPolicy: Always
+
+#---
+# ##########
+# # Adaper #
+# ##########
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: adaper-dep
+# spec:
+#    replicas: 3
+#   selector:
+#     matchLabels:
+#       app: adapter
+#   template:
+#     metadata:
+#       labels:
+#        app: adapter
+#     spec:
+#       containers:
+#         - name: adapter
+#           image: vagnernasc88/adapter-ms:3.0.0
+#           env:
+#             - name: "AMQP_CONN"
+#               value: "amqp://guest:guest@rabbit-mq-service:5672"
+#             - name: "AMQP_CONSUMER"
+#               value: "consumer1"
+#             - name: AMQP_TOPIC
+#               value: "topic1"
+#             - name: "CONSUMER_AUTH_GRANT_TP"
+#               value: "client_credentials"
+#             - name: "CONSUMER_URL"
+#               value: "{env_CONSUMER_URL}"
+#             - name: "CONSUMER_AUTH_URL"
+#               value: "{env_CONSUMER_AUTH_URL}"
+#             - name: "CONSUMER_AUTH_ID"
+#               value: "{env_CONSUMER_AUTH_ID}"
+#             - name: "CONSUMER_AUTH_SCRET"
+#               value: "{env_CONSUMER_AUTH_SCRET}"
+#             - name: "CONSUMER_AUTH_ACC_ID"
+#               value: "{env_CONSUMER_AUTH_ACC_ID}"
+#       restartPolicy: Always

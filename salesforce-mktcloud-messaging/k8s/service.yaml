@@ -1,0 +1,33 @@
+##########
+# Broker #
+##########
+apiVersion: v1
+kind: Service
+metadata:
+  name: borker-service
+spec:
+  selector:
+    app: broker
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30000 # can be comment on cloud
+  type: NodePort # local
+#  type: LoadBalancer # cloud
+
+---
+
+###############
+# AQMP Server #
+###############
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit-mq-service
+spec:
+  selector:
+    app: rabbit-mq
+  ports:
+  - port: 5672
+    targetPort: 5672
+  type: ClusterIP
